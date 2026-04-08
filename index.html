@@ -345,14 +345,17 @@ function calc() {
 
   document.getElementById('copyBtn').textContent = 'COPY';
   document.getElementById('copyBtn').classList.remove('copied');
+
+  clearTimeout(window._copyTimer);
+  window._copyTimer = setTimeout(() => copy(true), 800);
 }
 
-function copy() {
+function copy(auto = false) {
   if (!lastResult) return;
   const text = lastResult.toFixed(2).replace('.', ',');
   navigator.clipboard.writeText(text).then(() => {
     const btn = document.getElementById('copyBtn');
-    btn.textContent = '✓ COPIED';
+    btn.textContent = auto ? '✓ AUTO' : '✓ COPIED';
     btn.classList.add('copied');
     setTimeout(() => {
       btn.textContent = 'COPY';
