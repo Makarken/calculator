@@ -167,12 +167,6 @@
   .step-value { color: var(--text); }
   .step-value.accent { color: var(--accent); }
 
-  .divider {
-    height: 1px;
-    background: var(--border);
-    margin: 4px 0;
-  }
-
   .result-box {
     background: var(--green-dim);
     border: 1px solid #4ade8030;
@@ -184,15 +178,9 @@
     gap: 12px;
     cursor: pointer;
     transition: background 0.2s, border-color 0.2s;
-    position: relative;
-    overflow: hidden;
   }
 
-  .result-box:hover {
-    background: #4ade8025;
-    border-color: #4ade8050;
-  }
-
+  .result-box:hover { background: #4ade8025; border-color: #4ade8050; }
   .result-box:active { transform: scale(0.99); }
 
   .result-label {
@@ -237,11 +225,7 @@
   .copy-btn:hover { background: #4ade8035; }
   .copy-btn.copied { background: #4ade8050; color: #fff; }
 
-  .empty {
-    color: var(--muted);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 22px;
-  }
+  .empty { color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 22px; }
 
   .formula-hint {
     display: flex;
@@ -269,7 +253,7 @@
     <div class="logo">₿</div>
     <div class="header-text">
       <h1>Bybit Calculator</h1>
-      <p>USD → EUR + комиссия Bybit</p>
+      <p>USD → EUR + комиссии Bybit</p>
     </div>
   </div>
 
@@ -292,12 +276,16 @@
         <span class="step-value accent" id="s1">—</span>
       </div>
       <div class="step">
-        <span class="step-label">+ 1.7% (комиссия)</span>
+        <span class="step-label">+ 1.7% (пополнение)</span>
         <span class="step-value accent" id="s2">—</span>
+      </div>
+      <div class="step">
+        <span class="step-label">+ 2% (Bybit транзакция)</span>
+        <span class="step-value accent" id="s3">—</span>
       </div>
     </div>
 
-    <div class="result-box" id="resultBox" onclick="copy()">
+    <div class="result-box" onclick="copy()">
       <div>
         <div class="result-label">К оплате</div>
         <div class="result-value" id="result"><span class="empty">—</span></div>
@@ -308,7 +296,8 @@
     <div class="formula-hint">
       <span class="tag">× <b>0.86</b></span>
       <span class="tag">× <b>1.017</b></span>
-      <span class="tag">= <b>× 0.87462</b></span>
+      <span class="tag">× <b>1.02</b></span>
+      <span class="tag">= <b>× 0.89211</b></span>
     </div>
   </div>
 </div>
@@ -331,18 +320,18 @@ function calc() {
     return;
   }
 
-  const eur = raw * 0.86;
-  const final = eur * 1.017;
+  const eur        = raw * 0.86;
+  const withDeposit = eur * 1.017;
+  const final      = withDeposit * 1.02;
   lastResult = Math.round(final * 100) / 100;
 
   steps.style.display = 'flex';
   document.getElementById('s0').textContent = '$' + fmt(raw);
   document.getElementById('s1').textContent = '€' + fmt(eur);
-  document.getElementById('s2').textContent = '€' + fmt(final);
+  document.getElementById('s2').textContent = '€' + fmt(withDeposit);
+  document.getElementById('s3').textContent = '€' + fmt(final);
 
-  document.getElementById('result').innerHTML =
-    '€' + fmt(lastResult) + '<span>EUR</span>';
-
+  document.getElementById('result').innerHTML = '€' + fmt(lastResult) + '<span>EUR</span>';
   document.getElementById('copyBtn').textContent = 'COPY';
   document.getElementById('copyBtn').classList.remove('copied');
 }
@@ -354,10 +343,7 @@ function copy() {
     const btn = document.getElementById('copyBtn');
     btn.textContent = '✓ COPIED';
     btn.classList.add('copied');
-    setTimeout(() => {
-      btn.textContent = 'COPY';
-      btn.classList.remove('copied');
-    }, 2000);
+    setTimeout(() => { btn.textContent = 'COPY'; btn.classList.remove('copied'); }, 2000);
   });
 }
 
